@@ -8,8 +8,8 @@ app = Flask(__name__)
 app.config['MONGO_URI'] = "mongodb://marina:ersO%D564mj6@localhost:27017/bon-app-petit"
 mongo = PyMongo(app)
 
-@app.route ('/usuario', methods=['POST'])
-def usuario_existe(id):
+@app.route ('/user', methods=['POST'])
+def usuario_existe():
       username = request.json["username"]
       password = request.json["password"]
       userDocument = mongo.db.user.find_one({"username": username, "password": password})
