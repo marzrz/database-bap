@@ -1,4 +1,5 @@
 from typing import Set
+from flask_cors import CORS
 from flask import Flask, jsonify, request
 from flask_pymongo import PyMongo
 
@@ -11,6 +12,7 @@ def usuario_existe(id):
       username = request.json["username"]
       password = request.json["password"]
       userExists = mongo.db.user.find_one({"username": username, "password": password})
+      print (userExists)
       
       if (userExists):
             user = mongo.db.user.get
@@ -25,4 +27,8 @@ def usuario_existe(id):
       return jsonify(data)
 
 if __name__ == '__main__':
-    app.run(debug = True)
+      import ssl
+      context = ssl.SSLContext()
+      context.load_cert_chain("/etc/ssl/certs/conversational_ugr_es.pem","/etc/ssl/certs/conversational_ugr_es.key")
+      CORS(app)
+      app.run(host='0.0.0.0',port=5100,ssl_context=context,debug=False)
