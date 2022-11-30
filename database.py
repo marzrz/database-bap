@@ -2,6 +2,7 @@ from typing import Set
 from flask_cors import CORS
 from flask import Flask, jsonify, request
 from flask_pymongo import PyMongo
+from bson import json_util
 
 app = Flask(__name__)
 app.config['MONGO_URI'] = "mongodb://marina:ersO%D564mj6@localhost:27017/bon-app-petit"
@@ -11,17 +12,16 @@ mongo = PyMongo(app)
 def usuario_existe(id):
       username = request.json["username"]
       password = request.json["password"]
-      userExists = mongo.db.user.find_one({"username": username, "password": password})
-      print (userExists)
+      userDocument = mongo.db.user.find_one({"username": username, "password": password})
+      user = json_util.dumps(userDocument)
       
-      if (userExists):
-            user = mongo.db.user.get
+      if (userDocument):
             data = {
-                  'user': True
+                  'token': user._id
             }
       else:
             data = {
-                  'user': False
+                  'token': ''
             }
             
       return jsonify(data)
