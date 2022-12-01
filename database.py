@@ -15,12 +15,11 @@ def userExists():
       password = request.json["password"]
       userDocument = mongo.db.user.find_one({"username": username, "password": password})
       user = json_util.loads(json_util.dumps(userDocument))
-      objectId = user['_id']
-      print (str(objectId))
+      objectId = str(user['_id'])
       
       if (userDocument):
             data = {
-                  'token': ''
+                  'token': objectId
             }
       else:
             data = {
