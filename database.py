@@ -14,8 +14,8 @@ def userExists():
       username = request.json["username"]
       password = request.json["password"]
       userDocument = mongo.db.user.find_one({"username": username, "password": password})
-      user = jsonify(userDocument)
-      print (user)
+      user = json_util.dumps(userDocument)
+      print (json_util.loads(user))
       
       if (userDocument):
             data = {
