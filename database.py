@@ -5,7 +5,7 @@ from flask_pymongo import PyMongo
 from bson import json_util
 
 app = Flask(__name__)
-app.config['MONGO_URI'] = "mongodb://marina:ersO%D564mj6@localhost:27017/bon-app-petit"
+app.config['MONGO_URI'] = "mongodb://marina:ersO%D564mj6@localhost:27017/?authMechanism=DEFAULT"
 mongo = PyMongo(app)
 
 @app.route ('/user', methods=['POST'])
