@@ -10,15 +10,16 @@ app.config['MONGO_URI'] = "mongodb://localhost:27017/bon-app-petit"
 mongo = PyMongo(app)
 
 @app.route ('/user', methods=['POST'])
-def usuario_existe():
+def userExists():
       username = request.json["username"]
       password = request.json["password"]
       userDocument = mongo.db.user.find_one({"username": username, "password": password})
       user = json_util.dumps(userDocument)
+      print (user)
       
       if (userDocument):
             data = {
-                  'token': user._id
+                  'token': ''
             }
       else:
             data = {
