@@ -25,6 +25,25 @@ def userExists():
             
       return jsonify(data)
 
+@app.route ('/user', methods=['UPDATE'])
+def updateUser():
+      filter = request.json["filter"]
+      update = { '$set': request.json["update"] }
+      mongo.db.user.update_one(filter, update)
+      userDocument = mongo.db.user.find_one(filter)
+
+      if (userDocument):
+            print(json_util.loads(json_util.dumps(userDocument)))
+            data = {
+                  'status': "success"
+            }
+            return jsonify(data)
+      else: 
+            data = {
+                  'status': "error"
+            }
+            return jsonify(data)
+
 if __name__ == '__main__':
       import ssl
       context = ssl.SSLContext()
