@@ -2,7 +2,7 @@ from typing import Set
 from flask_cors import CORS
 from flask import Flask, jsonify, request
 from flask_pymongo import PyMongo
-from bson import json_util
+from bson import json_util, ObjectId
 
 app = Flask(__name__)
 # marina:ersO%D564mj6@
@@ -27,10 +27,10 @@ def userExists():
 
 @app.route ('/user/update', methods=['POST'])
 def updateUser():
-      filter = request.json["filter"]
+      id = request.json["_id"]
       update = { '$set': request.json["update"] }
       mongo.db.user.update_one(filter, update)
-      userDocument = mongo.db.user.find_one(filter)
+      userDocument = mongo.db.user.find_one({'_id': ObjectId(id)})
 
       if (userDocument):
             print(json_util.loads(json_util.dumps(userDocument)))
