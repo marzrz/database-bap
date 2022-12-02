@@ -19,10 +19,12 @@ def userExists():
             user = json_util.loads(json_util.dumps(userDocument))
             objectId = str(user['_id'])
             data = {
+                  'exists': True,
                   'token': objectId
             }
       else:
             data = {
+                  'exists': False,
                   'token': ''
             }
             
