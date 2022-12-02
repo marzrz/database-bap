@@ -9,7 +9,7 @@ app = Flask(__name__)
 app.config['MONGO_URI'] = "mongodb://localhost:27017/bon-app-petit"
 mongo = PyMongo(app)
 
-@app.route ('/user', methods=['POST'])
+@app.route ('/user/exists', methods=['POST'])
 def userExists():
       username = request.json["username"]
       password = request.json["password"]
@@ -25,7 +25,7 @@ def userExists():
             
       return jsonify(data)
 
-@app.route ('/user', methods=['UPDATE'])
+@app.route ('/user/update', methods=['POST'])
 def updateUser():
       filter = request.json["filter"]
       update = { '$set': request.json["update"] }
