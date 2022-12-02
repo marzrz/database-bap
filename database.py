@@ -28,9 +28,11 @@ def userExists():
 @app.route ('/user/update', methods=['POST'])
 def updateUser():
       id = request.json["_id"]
+      filter = { '_id': ObjectId(id)}
       update = { '$set': request.json["update"] }
+      
       mongo.db.user.update_one(filter, update)
-      userDocument = mongo.db.user.find_one({'_id': ObjectId(id)})
+      userDocument = mongo.db.user.find_one(filter)
 
       if (userDocument):
             print(json_util.loads(json_util.dumps(userDocument)))
