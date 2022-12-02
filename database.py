@@ -22,11 +22,6 @@ def userExists():
                   'exists': True,
                   'token': objectId
             }
-      else:
-            data = {
-                  'exists': False,
-                  'token': ''
-            }
             
       return jsonify(data)
 
