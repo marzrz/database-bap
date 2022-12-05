@@ -52,11 +52,9 @@ def setConversation():
       data = request.json['conver']
       result = mongo.db.user.insert_one(data)
       idConver = result.inserted_id
-      print(idConver)
 
       filter = { '_id': ObjectId(idUser)}
       userDocument = mongo.db.user.find_one(filter)
-      print(userDocument)
 
       if (userDocument):
             user = json_util.loads(json_util.dumps(userDocument))
