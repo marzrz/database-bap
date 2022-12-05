@@ -46,6 +46,39 @@ def updateUser():
             }
             return jsonify(data)
 
+@app.route ('/conversation', methods=['POST'])
+def setConversation():
+      idUser = request.json['user']
+      data = request.json['conver']
+      converDoc = mongo.db.user.insert_one(data)
+      print(converDoc)
+      userDocument = mongo.db.user.find_one({ '_id': ObjectId(idUser)})
+      print(userDocument)
+
+      if (userDocument):
+            user = json_util.loads(json_util.dumps(userDocument))
+            converArray = user['conversations']
+
+            conver = json_util.loads(json_util.dumps(converDoc))
+            _id = conver['_id']
+            converArray.append(_id)
+            dataUpdate = {
+                  '$set': {'conversations': converArray}
+            }
+            mongo.db.user.update_one(ObjectId(idUser), dataUpdate)
+            response = {
+                  'status': "success"
+            }
+            return jsonify(response)
+      else: 
+            response = {
+                  'status': "error"
+            }
+            return jsonify(response)
+
+      
+
+
 if __name__ == '__main__':
       import ssl
       context = ssl.SSLContext()
