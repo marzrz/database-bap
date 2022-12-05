@@ -53,7 +53,9 @@ def setConversation():
       result = mongo.db.user.insert_one(data)
       idConver = result.inserted_id
       print(idConver)
-      userDocument = mongo.db.user.find_one({ '_id': ObjectId(idUser)})
+
+      filter = { '_id': ObjectId(idUser)}
+      userDocument = mongo.db.user.find_one(filter)
       print(userDocument)
 
       if (userDocument):
@@ -64,7 +66,7 @@ def setConversation():
             dataUpdate = {
                   '$set': {'conversations': converArray}
             }
-            mongo.db.user.update_one(ObjectId(idUser), dataUpdate)
+            mongo.db.user.update_one(filter, dataUpdate)
             response = {
                   'status': "success"
             }
