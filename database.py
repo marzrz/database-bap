@@ -50,8 +50,9 @@ def updateUser():
 def setConversation():
       idUser = request.json['user']
       data = request.json['conver']
-      converDoc = mongo.db.user.insert_one(data)
-      print(converDoc)
+      result = mongo.db.user.insert_one(data)
+      idConver = result.inserted_id
+      print(idConver)
       userDocument = mongo.db.user.find_one({ '_id': ObjectId(idUser)})
       print(userDocument)
 
@@ -59,9 +60,7 @@ def setConversation():
             user = json_util.loads(json_util.dumps(userDocument))
             converArray = user['conversations']
 
-            conver = json_util.loads(json_util.dumps(converDoc))
-            _id = conver['_id']
-            converArray.append(_id)
+            converArray.append(idConver)
             dataUpdate = {
                   '$set': {'conversations': converArray}
             }
