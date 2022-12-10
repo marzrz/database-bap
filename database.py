@@ -25,6 +25,14 @@ def userExists():
             
       return jsonify(data)
 
+@app.route ('/user/<id>', methods=['GET'])
+def getUser(id):
+      user = mongo.db.usuario.find_one({"_id": ObjectId(id)})
+      response = json_util.dumps(user)
+      print(response)
+
+      return 
+
 @app.route ('/user/update', methods=['POST'])
 def updateUser():
       id = request.json["_id"]
