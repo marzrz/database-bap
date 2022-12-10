@@ -32,7 +32,7 @@ def getUser(id):
       response = json_util.dumps(user)
       print(response)
 
-      return jsonify({'message': 'success'})
+      return response
 
 @app.route ('/user/update', methods=['POST'])
 def updateUser():
