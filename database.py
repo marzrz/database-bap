@@ -28,7 +28,7 @@ def userExists():
 @app.route ('/user/<id>', methods=['GET'])
 def getUser(id):
       print (id)
-      user = mongo.db.usuario.find_one({"_id": ObjectId(id)})
+      user = mongo.db.user.find_one({"_id": ObjectId(id)})
       response = json_util.dumps(user)
       print(response)
 
