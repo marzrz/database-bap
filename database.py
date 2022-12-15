@@ -89,7 +89,7 @@ def getLastConversation(id):
       if (userDocument):
             user = json_util.loads(json_util.dumps(userDocument))
             convers = user['conversations']
-            if (convers[-1]=='null'):
+            if (not convers):
                   response = {
                         'status': "error"
                   }
