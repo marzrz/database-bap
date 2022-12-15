@@ -88,8 +88,18 @@ def getLastConversation(id):
       userDocument = mongo.db.user.find_one({"_id": ObjectId(id)})
       if (userDocument):
             user = json_util.loads(json_util.dumps(userDocument))
-            last_conver = user['conversations']
-            print (last_conver)
+            convers = user['conversations']
+            if (convers[-1]=='null'):
+                  response = {
+                        'status': "error"
+                  }
+                  return jsonify(response)
+            else:
+                  last_conver = convers[-1]
+                  response = {
+                        "last_conver": last_conver
+                  }
+                  return jsonify(response)
       else:
             response = {
                   'status': "error"
