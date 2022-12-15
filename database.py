@@ -30,7 +30,6 @@ def getUser(id):
       print (id)
       user = mongo.db.user.find_one({"_id": ObjectId(id)})
       response = json_util.dumps(user)
-      print(response)
 
       return response
 
@@ -84,8 +83,23 @@ def setConversation():
             }
             return jsonify(response)
 
-      
+@app.route ('/conversation/last/<id>', methods=['GET'])
+def getLastConversation(id):
+      userDocument = mongo.db.user.find_one({"_id": ObjectId(id)})
+      if (userDocument):
+            user = json_util.loads(json_util.dumps(user))
+            last_conver = user['conversations'][-1]
+            print (last_conver)
+      else:
+            response = {
+                  'status': "error"
+            }
+            return jsonify(response)
 
+
+
+
+      return
 
 if __name__ == '__main__':
       import ssl
