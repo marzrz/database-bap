@@ -88,7 +88,7 @@ def getLastConversation(id):
       userDocument = mongo.db.user.find_one({"_id": ObjectId(id)})
       if (userDocument):
             user = json_util.loads(json_util.dumps(userDocument))
-            last_conver = user['conversations'][-1]
+            last_conver = user['conversations']
             print (last_conver)
       else:
             response = {
