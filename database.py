@@ -48,7 +48,7 @@ def updateUser():
       userDocument = mongo.db.user.find_one(filter)
 
       if (userDocument):
-            print("actualizacion " + json_util.loads(json_util.dumps(userDocument)))
+            print("actualizacion " + str(json_util.loads(json_util.dumps(userDocument))))
             data = {
                   'status': "success"
             }
