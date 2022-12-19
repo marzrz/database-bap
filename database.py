@@ -54,6 +54,7 @@ def updateUser():
             }
             return jsonify(data)
       else: 
+            print("error")
             data = {
                   'status': "error"
             }
