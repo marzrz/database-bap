@@ -63,30 +63,31 @@ def updateUser():
 def setConversation():
       idUser = request.json['user']
       data = request.json['conver']
-      result = mongo.db.user.insert_one(data)
-      idConver = result.inserted_id
+      for line in data:
+            result = mongo.db.user.insert_one(line)
+            idConver = result.inserted_id
 
-      filter = { '_id': ObjectId(idUser)}
-      userDocument = mongo.db.user.find_one(filter)
+            filter = { '_id': ObjectId(idUser)}
+            userDocument = mongo.db.user.find_one(filter)
 
-      if (userDocument):
-            user = json_util.loads(json_util.dumps(userDocument))
-            converArray = user['conversations']
+            if (userDocument):
+                  user = json_util.loads(json_util.dumps(userDocument))
+                  converArray = user['conversations']
 
-            converArray.append(idConver)
-            dataUpdate = {
-                  '$set': {'conversations': converArray}
-            }
-            mongo.db.user.update_one(filter, dataUpdate)
-            response = {
-                  'status': "success"
-            }
-            return jsonify(response)
-      else: 
-            response = {
-                  'status': "error"
-            }
-            return jsonify(response)
+                  converArray.append(idConver)
+                  dataUpdate = {
+                        '$set': {'conversations': converArray}
+                  }
+                  mongo.db.user.update_one(filter, dataUpdate)
+                  response = {
+                        'status': "success"
+                  }
+                  return jsonify(response)
+            else: 
+                  response = {
+                        'status': "error"
+                  }
+                  return jsonify(response)
 
 @app.route ('/conversation/last/<id>', methods=['GET'])
 def getLastConversation(id):
