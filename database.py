@@ -22,6 +22,11 @@ def userExists():
                   'exists': True,
                   'token': objectId
             }
+      else:
+            data = {
+                  'exists': False,
+                  'token': ''
+            }
             
       return jsonify(data)
 
@@ -91,25 +96,20 @@ def getLastConversation(id):
             convers = user['conversations']
             if (not convers):
                   response = {
-                        'status': "error"
+                        '': "error"
                   }
                   return jsonify(response)
             else:
-                  last_conver = convers[-1]
-                  response = {
-                        "last_conver": last_conver
-                  }
-                  return jsonify(response)
+                  last_conver_id = convers[-1]
+                  converDocument = mongo.db.user.find_one({"_id": ObjectId(last_conver_id)})
+                  response = json_util.dumps(converDocument)
+
+                  return response
       else:
             response = {
                   'status': "error"
             }
             return jsonify(response)
-
-
-
-
-      return
 
 if __name__ == '__main__':
       import ssl
