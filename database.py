@@ -50,7 +50,8 @@ def updateUser():
       if (userDocument):
             print(json_util.loads(json_util.dumps(userDocument)))
             data = {
-                  'status': "success"
+                  'status': "success",
+                  'data': userDocument
             }
             return jsonify(data)
       else: 
@@ -84,7 +85,8 @@ def setConversation():
             }
             mongo.db.user.update_one(filter, dataUpdate)
             response = {
-                  'status': "success"
+                  'status': "success",
+                  'data': dataUpdate
             }
             return jsonify(response)
       else: 
@@ -101,7 +103,7 @@ def getLastConversation(id):
             convers = user['conversations']
             if (not convers):
                   response = {
-                        '': "error"
+                        'status': "error"
                   }
                   return jsonify(response)
             else:
