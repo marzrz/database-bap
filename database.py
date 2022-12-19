@@ -85,8 +85,7 @@ def setConversation():
             }
             mongo.db.user.update_one(filter, dataUpdate)
             response = {
-                  'status': "success",
-                  'data': dataUpdate
+                  'status': "success"
             }
             return jsonify(response)
       else: 
