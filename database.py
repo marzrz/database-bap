@@ -60,13 +60,43 @@ def updateUser():
             }
             return jsonify(data)
 
+@app.route('/message', methods=['POST'])
+def setMessage():
+      # idUser = request.json['user']
+      message = request.json['message']
+      session = request.json['session']
+
+      filter = { 'session': session }
+      converDocument = mongo.db.conversation.find_one(filter)
+
+      if (converDocument):
+            conver = json_util.loads(json_util.dumps(converDocument))
+            msgArray = conver['messages']
+
+            msgArray.append(message)
+            dataUpdate = {
+                  '$set': {'messages': msgArray}
+            }
+            mongo.db.conversation.update_one(filter, dataUpdate)
+            response = {
+                  'status': 'success'
+            }
+            return jsonify(response)
+      else: 
+            response = {
+                  'status': "error"
+            }
+            return jsonify(response)
+
 @app.route ('/conversation', methods=['POST'])
 def setConversation():
       idUser = request.json['user']
       data = request.json['conver']
+      session = request.json['session']
 
       conversation = {
-            'conver': data
+            'session': session,
+            'messages': data
       }
 
       result = mongo.db.conversation.insert_one(conversation)
