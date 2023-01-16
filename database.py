@@ -96,7 +96,7 @@ def setConversation():
 
       conversation = {
             'session': session,
-            'messages': data
+            'messages': [data]
       }
 
       result = mongo.db.conversation.insert_one(conversation)
