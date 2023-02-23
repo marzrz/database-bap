@@ -38,7 +38,7 @@ def getUser(id):
 
       return response
 
-@app.route ('/config/', methods=['GET'])
+@app.route ('/config', methods=['GET'])
 def getConfig():
       config = mongo.db.config.find()
       response = json_util.dumps(config[0])
