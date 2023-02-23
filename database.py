@@ -9,10 +9,11 @@ app = Flask(__name__)
 app.config['MONGO_URI'] = "mongodb://localhost:27017/bon-app-petit"
 mongo = PyMongo(app)
 
-@app.route ('/configuration', methods=['GET'])
+@app.route ('/config', methods=['GET'])
 def getConfig():
       config = mongo.db.config.find()
       response = json_util.dumps(config[0])
+      print(response)
 
       return response
 
