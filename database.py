@@ -38,16 +38,12 @@ def getUser(id):
 
       return response
 
-@app.route ('/config', methods=['GET'])
+@app.route ('/config/', methods=['GET'])
 def getConfig():
-      data = {
-                  'status': "success"
-      }
-      # config = mongo.db.config.find()
-      # response = json_util.dumps(config[0])
-      # print(response)
+      config = mongo.db.config.find()
+      response = json_util.dumps(config[0])
 
-      return jsonify(data)
+      return response
 
 @app.route ('/user/update', methods=['POST'])
 def updateUser():
