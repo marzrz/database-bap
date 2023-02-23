@@ -9,14 +9,6 @@ app = Flask(__name__)
 app.config['MONGO_URI'] = "mongodb://localhost:27017/bon-app-petit"
 mongo = PyMongo(app)
 
-@app.route ('/config', methods=['GET'])
-def getConfig():
-      config = mongo.db.config.find()
-      response = json_util.dumps(config[0])
-      print(response)
-
-      return response
-
 @app.route ('/user/exists', methods=['POST'])
 def userExists():
       username = request.json["username"]
@@ -45,6 +37,17 @@ def getUser(id):
       response = json_util.dumps(user)
 
       return response
+
+@app.route ('/config', methods=['GET'])
+def getConfig():
+      data = {
+                  'status': "success"
+      }
+      # config = mongo.db.config.find()
+      # response = json_util.dumps(config[0])
+      # print(response)
+
+      return jsonify(data)
 
 @app.route ('/user/update', methods=['POST'])
 def updateUser():
