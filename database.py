@@ -9,6 +9,50 @@ app = Flask(__name__)
 app.config['MONGO_URI'] = "mongodb://localhost:27017/bon-app-petit"
 mongo = PyMongo(app)
 
+##### CONFIG #####
+@app.route ('/config', methods=['GET'])
+def getGeneralConfig():
+      config = mongo.db.config.find()
+      response = json_util.dumps(config[0])
+
+      return response
+
+@app.route ('/config/<id>', methods=['GET'])
+def getUserConfig():
+      userDocument = mongo.db.user.find_one({"_id": ObjectId(id)})
+      
+      if (userDocument):
+            user = json_util.loads(json_util.dumps(userDocument))
+            data = user['config']
+      else:
+            data = {
+                  'status': 'error'
+            }
+            
+      return jsonify(data)
+
+@app.route ('/config/update', methods=['POST'])
+def updateConfig():
+      filter = { '_id': ObjectId("63f728e1b84fff80e32a1570")}
+      update = { '$set': request.json["update"] }
+      
+      mongo.db.config.update_one(filter, update)
+      configDocument = mongo.db.config.find_one(filter)
+
+      if (configDocument):
+            print("actualizacion " + str(json_util.loads(json_util.dumps(configDocument))))
+            data = {
+                  'status': "success"
+            }
+            return jsonify(data)
+      else: 
+            print("error")
+            data = {
+                  'status': "error"
+            }
+            return jsonify(data)
+
+##### USER #####
 @app.route ('/user/exists', methods=['POST'])
 def userExists():
       username = request.json["username"]
@@ -38,13 +82,6 @@ def getUser(id):
 
       return response
 
-@app.route ('/config', methods=['GET'])
-def getConfig():
-      config = mongo.db.config.find()
-      response = json_util.dumps(config[0])
-
-      return response
-
 @app.route ('/user/update', methods=['POST'])
 def updateUser():
       id = request.json["_id"]
@@ -67,6 +104,8 @@ def updateUser():
             }
             return jsonify(data)
 
+
+##### CONVERSATIONS ######
 @app.route('/message', methods=['POST'])
 def setMessage():
       # idUser = request.json['user']
