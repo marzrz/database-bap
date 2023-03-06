@@ -120,12 +120,14 @@ def setPretest():
             user = json_util.loads(json_util.dumps(userDocument))
             pretestArray = user['pretests']
             pointsUser = user['points']
+            numPretest = user['pretest_complete']
 
             pretestArray.append(idPretest)
             dataUpdate = {
                   '$set': {
                     'pretests': pretestArray,
-                    'points': pointsUser + points
+                    'points': pointsUser + points,
+                    'pretest_complete': numPretest + 1
                     }
             }
             mongo.db.user.update_one(filter, dataUpdate)
