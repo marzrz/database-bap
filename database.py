@@ -104,6 +104,41 @@ def updateUser():
             }
             return jsonify(data)
 
+@app.route ('/user/pretest', methods=['POST'])
+def setPretest():
+      idUser = request.json['user']
+      data = request.json['pretest']
+      points = request.json['points']
+
+      result = mongo.db.pretest.insert_one(data)
+      idPretest = result.inserted_id
+
+      filter = { '_id': ObjectId(idUser)}
+      userDocument = mongo.db.user.find_one(filter)
+
+      if (userDocument):
+            user = json_util.loads(json_util.dumps(userDocument))
+            pretestArray = user['pretests']
+            pointsUser = user['points']
+
+            pretestArray.append(idPretest)
+            dataUpdate = {
+                  '$set': {
+                    'pretests': pretestArray,
+                    'points': pointsUser + points
+                    }
+            }
+            mongo.db.user.update_one(filter, dataUpdate)
+            response = {
+                  'status': "success"
+            }
+            return jsonify(response)
+      else: 
+            response = {
+                  'status': "error"
+            }
+            return jsonify(response)
+
 
 ##### CONVERSATIONS ######
 @app.route('/message', methods=['POST'])
