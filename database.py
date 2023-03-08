@@ -9,6 +9,14 @@ app = Flask(__name__)
 app.config['MONGO_URI'] = "mongodb://localhost:27017/bon-app-petit"
 mongo = PyMongo(app)
 
+##### SHOP #####
+@app.route ('/shop', methods=['GET'])
+def getShop():
+      shop = mongo.db.shop.find()
+      response = json_util.dumps(shop[0])
+
+      return response
+
 ##### CONFIG #####
 @app.route ('/config', methods=['GET'])
 def getGeneralConfig():
