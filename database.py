@@ -9,6 +9,24 @@ app = Flask(__name__)
 app.config['MONGO_URI'] = "mongodb://localhost:27017/bon-app-petit"
 mongo = PyMongo(app)
 
+##### GAMES #####
+@app.route ('/game', methods=['POST'])
+def addGame():
+      data = request.json["update"]
+      
+      gamesDocument = mongo.db.games.insert_one(data)
+
+      if (gamesDocument):
+            data = {
+                  'status': "success"
+            }
+            return jsonify(data)
+      else: 
+            data = {
+                  'status': "error"
+            }
+            return jsonify(data)
+
 ##### SHOP #####
 @app.route ('/shop', methods=['GET'])
 def getShop():
