@@ -10,8 +10,8 @@ app.config['MONGO_URI'] = "mongodb://localhost:27017/bon-app-petit"
 mongo = PyMongo(app)
 
 ##### GAMES #####
-@app.route ('/game', methods=['POST'])
-def addGame():
+@app.route ('/user/game', methods=['POST'])
+def addUserGame():
       data = request.json["update"]
       
       gamesDocument = mongo.db.games.insert_one(data)
