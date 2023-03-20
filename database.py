@@ -28,7 +28,7 @@ def addUserGame():
             }
             return jsonify(data)
 
-@app.route ('/user/game', methods=['GET'])
+@app.route ('/user/game/available', methods=['POST'])
 def getGameAvailable():
     user = request.json["user"]
     game = request.json["game"]
