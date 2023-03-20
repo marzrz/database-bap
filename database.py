@@ -45,6 +45,7 @@ def getGameAvailable():
     if (userGameDocument):
         for doc in userGameDocument:
             userGame = json_util.loads(json_util.dumps(doc))
+            print(userGame['date'])
             dateUserGame = datetime.datetime(userGame['date'])
             dateNow = datetime.datetime.now()
 
