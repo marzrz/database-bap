@@ -3,6 +3,7 @@ from flask_cors import CORS
 from flask import Flask, jsonify, request
 from flask_pymongo import PyMongo
 from bson import json_util, ObjectId
+import datetime
 
 app = Flask(__name__)
 # marina:ersO%D564mj6@
@@ -26,6 +27,46 @@ def addUserGame():
                   'status': "error"
             }
             return jsonify(data)
+
+@app.route ('/user/game', methods=['GET'])
+def getGameAvailable():
+    user = request.json["user"]
+    game = request.json["game"]
+
+    filter = {
+        'user': user,
+        'game': game
+    }
+
+    userGameDocument = mongo.db.games.find(filter)
+
+    gameAvailable = False
+
+    if (userGameDocument):
+        for doc in userGameDocument:
+            userGame = json_util.loads(json_util.dumps(doc))
+            dateUserGame = datetime.datetime(userGame['date'])
+            dateNow = datetime.datetime.now()
+
+            if (dateUserGame.day == dateNow.day):
+                gameAvailable = False
+            else:
+                gameAvailable = True
+
+        data = {
+            'available': gameAvailable,
+            'status': 'success'
+        }
+
+        return jsonify(data)
+    else:
+        data = {
+            'available': 'not found',
+            'status': 'error'
+        }
+
+        return jsonify(data)
+
 
 ##### SHOP #####
 @app.route ('/shop', methods=['GET'])
