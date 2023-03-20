@@ -35,7 +35,7 @@ def getGameAvailable():
 
     filter = {
         'user': user,
-        'game': game
+        'type': game
     }
 
     userGameDocument = mongo.db.games.find(filter)
