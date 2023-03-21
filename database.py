@@ -29,7 +29,7 @@ def addUserGame():
             return jsonify(data)
 
 @app.route ('/user/game/<id>', methods=['GET'])
-def nextGame():
+def nextGame(id):
     data = {
         'game': 1
     }
