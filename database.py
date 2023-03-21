@@ -40,16 +40,17 @@ def getGameAvailable():
 
     userGameDocument = mongo.db.games.find(filter)
 
-    gameAvailable = False
+    gameAvailable = True
 
     if (userGameDocument):
         for doc in userGameDocument:
             userGame = json_util.loads(json_util.dumps(doc))
-            print(userGame['date'])
-            dateUserGame = datetime.datetime(userGame['date'])
+            print(userGame['day'])
+            dayUserGame = userGame['day']
+            monthUserGame = userGame['month']
             dateNow = datetime.datetime.now()
 
-            if (dateUserGame.day == dateNow.day):
+            if (dayUserGame == dateNow.day and monthUserGame == dateNow.month):
                 gameAvailable = False
             else:
                 gameAvailable = True
