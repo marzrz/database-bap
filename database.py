@@ -28,6 +28,14 @@ def addUserGame():
             }
             return jsonify(data)
 
+@app.route ('/user/game/<id>', methods=['GET'])
+def nextGame():
+    data = {
+        'game': 1
+    }
+
+    return jsonify(data)
+
 @app.route ('/user/game/available', methods=['POST'])
 def getGameAvailable():
     user = request.json["user"]
