@@ -67,44 +67,49 @@ def pretestAvailable(pretest):
 
 @app.route ('/user/game/<id>', methods=['GET'])
 def nextGame(id):
-    game = ''
+    game = -5
 
     userDocument = mongo.db.games.find_one({ '_id': ObjectId(id) })
     user = json_util.loads(json_util.dumps(userDocument))
 
     if user['pretest_complete'] == 0:
         if pretestAvailable(1):
-            game = 'pretest'
+            game = 0
         else:
-            game = ''
+            game = -5
     elif user['pretest_complete'] == 1:
         if pretestAvailable(2):
-            game = 'pretest'
+            game = 0
         elif not user['game1_part1_complete'] and not user['game1_part2_complete']:
             if gameAvailable(id, 'pretest'):
-                game = 'game1'
+                game = 1
             else:
-                game = ''
+                game = -5
         elif not user['game2_complete']:
             if gameAvailable(id, 'game1'):
-                game = 'game2'
+                game = 3
             else:
-                game = ''
+                game = -5
         elif not user['game3_part1_complete'] and not user['game3_part2_complete']:
             if gameAvailable(id, 'game2'):
-                game = 'game3'
+                game = 4
             else:
-                game = ''
+                game = -5
         elif not user['game4_complete']:
             if gameAvailable(id, 'game3'):
-                game = 'game4'
+                game = 5
             else:
-                game = ''
+                game = -5
+        elif not user['survey_complete']:
+            if gameAvailable(id, 'game4'):
+                game = 6
+            else:
+                game = -5
     elif user['pretest_complete' == 2]:
         if pretestAvailable(3):
-            game = 'pretest'
+            game = 0
         else:
-            game = ''
+            game = -5
 
     return jsonify({'game': game})
 
