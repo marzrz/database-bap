@@ -69,7 +69,7 @@ def pretestAvailable(pretest):
 def nextGame(id):
     game = -5
 
-    userDocument = mongo.db.games.find_one({ '_id': ObjectId(id) })
+    userDocument = mongo.db.user.find_one({ '_id': ObjectId(id) })
     user = json_util.loads(json_util.dumps(userDocument))
 
     if user['pretest_complete'] == 0:
