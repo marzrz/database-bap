@@ -60,7 +60,7 @@ def pretestAvailable(pretest):
     configPretest = json_util.loads(json_util.dumps(configDocument))
     dateNow = datetime.datetime.now()
 
-    if configPretest['pretest'+pretest+'_month'] == dateNow.month and (configPretest['pretest'+pretest+'_day'] == dateNow.day or configPretest['pretest'+pretest+'_day'] == dateNow.day+1 or configPretest['pretest'+pretest+'_day'] == dateNow.day+2):
+    if configPretest['pretest'+str(pretest)+'_month'] == dateNow.month and (configPretest['pretest'+str(pretest)+'_day'] == dateNow.day or configPretest['pretest'+str(pretest)+'_day'] == dateNow.day+1 or configPretest['pretest'+str(pretest)+'_day'] == dateNow.day+2):
         return True
     else:
         return False
