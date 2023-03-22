@@ -28,13 +28,85 @@ def addUserGame():
             }
             return jsonify(data)
 
-@app.route ('/user/game/<id>', methods=['GET'])
-def nextGame(id):
-    data = {
-        'game': 1
+def gameAvailable(user, game):
+    filter = {
+        'user': user,
+        'type': game
     }
 
-    return jsonify(data)
+    userGameDocument = mongo.db.games.find(filter)
+
+    gameAvailable = True
+
+    if (userGameDocument):
+        for doc in userGameDocument:
+            userGame = json_util.loads(json_util.dumps(doc))
+            dayUserGame = userGame['day']
+            monthUserGame = userGame['month']
+            dateNow = datetime.datetime.now()
+
+            if (dayUserGame == dateNow.day and monthUserGame == dateNow.month):
+                gameAvailable = False
+            else:
+                gameAvailable = True
+
+        return gameAvailable
+    else:
+        return 
+
+def pretestAvailable(pretest):
+
+    configDocument = mongo.db.config.find_one({'_id': ObjectId('641afea2cc5d82ccbacd36de')})
+    configPretest = json_util.loads(json_util.dumps(configDocument))
+    dateNow = datetime.datetime.now()
+
+    if configPretest['pretest'+pretest+'_month'] == dateNow.month and (configPretest['pretest'+pretest+'_day'] == dateNow.day or configPretest['pretest'+pretest+'_day'] == dateNow.day+1 or configPretest['pretest'+pretest+'_day'] == dateNow.day+2):
+        return True
+    else:
+        return False
+
+@app.route ('/user/game/<id>', methods=['GET'])
+def nextGame(id):
+    game = ''
+
+    userDocument = mongo.db.games.find_one({ '_id': ObjectId(id) })
+    user = json_util.loads(json_util.dumps(userDocument))
+
+    if user['pretest_complete'] == 0:
+        if pretestAvailable(1):
+            game = 'pretest'
+        else:
+            game = ''
+    elif user['pretest_complete'] == 1:
+        if pretestAvailable(2):
+            game = 'pretest'
+        elif not user['game1_part1_complete'] and not user['game1_part2_complete']:
+            if gameAvailable(id, 'pretest'):
+                game = 'game1'
+            else:
+                game = ''
+        elif not user['game2_complete']:
+            if gameAvailable(id, 'game1'):
+                game = 'game2'
+            else:
+                game = ''
+        elif not user['game3_part1_complete'] and not user['game3_part2_complete']:
+            if gameAvailable(id, 'game2'):
+                game = 'game3'
+            else:
+                game = ''
+        elif not user['game4_complete']:
+            if gameAvailable(id, 'game3'):
+                game = 'game4'
+            else:
+                game = ''
+    elif user['pretest_complete' == 2]:
+        if pretestAvailable(3):
+            game = 'pretest'
+        else:
+            game = ''
+
+    return jsonify({'game': game})
 
 @app.route ('/user/game/available', methods=['POST'])
 def getGameAvailable():
@@ -53,7 +125,6 @@ def getGameAvailable():
     if (userGameDocument):
         for doc in userGameDocument:
             userGame = json_util.loads(json_util.dumps(doc))
-            print(userGame['day'])
             dayUserGame = userGame['day']
             monthUserGame = userGame['month']
             dateNow = datetime.datetime.now()
