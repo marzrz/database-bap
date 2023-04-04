@@ -71,7 +71,7 @@ def nextGame(id):
 
     userDocument = mongo.db.user.find_one({ '_id': ObjectId(id) })
     user = json_util.loads(json_util.dumps(userDocument))
-
+    print(user)
     if user['pretest_complete'] == 0:
         if pretestAvailable(1):
             game = 0
