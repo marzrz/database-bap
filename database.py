@@ -60,7 +60,7 @@ def pretestAvailable(pretest):
     configPretest = json_util.loads(json_util.dumps(configDocument))
     dateNow = datetime.datetime.now()
 
-    if configPretest['pretest'+str(pretest)+'_month'] == dateNow.month and (configPretest['pretest'+str(pretest)+'_day'] == dateNow.day or configPretest['pretest'+str(pretest)+'_day'] == dateNow.day+1 or configPretest['pretest'+str(pretest)+'_day'] == dateNow.day+2):
+    if configPretest['pretest'+str(pretest)+'_month'] == dateNow.month and configPretest['pretest'+str(pretest)+'_day'] == dateNow.day:
         return True
     else:
         return False
@@ -71,7 +71,6 @@ def nextGame(id):
 
     userDocument = mongo.db.user.find_one({ '_id': ObjectId(id) })
     user = json_util.loads(json_util.dumps(userDocument))
-    print(user)
     if user['pretest_complete'] == 0:
         if pretestAvailable(1):
             game = 0
