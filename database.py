@@ -77,9 +77,7 @@ def nextGame(id):
         else:
             game = -5
     elif user['pretest_complete'] == 1:
-        if pretestAvailable(2):
-            game = 0
-        elif not user['game1_part1_complete'] and not user['game1_part2_complete']:
+        if not user['game1_part1_complete'] and not user['game1_part2_complete']:
             if gameAvailable(id, 'pretest'):
                 game = 1
             else:
@@ -104,6 +102,8 @@ def nextGame(id):
                 game = 6
             else:
                 game = -5
+        elif pretestAvailable(2):
+            game = 0
     elif user['pretest_complete' == 2]:
         if pretestAvailable(3):
             game = 0
