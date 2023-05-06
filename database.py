@@ -104,7 +104,7 @@ def nextGame(id):
                 game = -5
         elif pretestAvailable(2):
             game = 0
-    elif user['pretest_complete' == 2]:
+    elif user['pretest_complete'] == 2:
         if pretestAvailable(3):
             game = 0
         else:
