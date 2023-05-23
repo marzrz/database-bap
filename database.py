@@ -63,7 +63,7 @@ def pretest3Available(user):
     userGameDocument = mongo.db.games.find(filter)
 
     if (userGameDocument):
-        userGame = json_util.loads(json_util.dumps(userGameDocument[-1]))
+        userGame = json_util.loads(json_util.dumps(userGameDocument[len(userGameDocument) - 1]))
         dayUserGame = userGame['day']
         monthUserGame = userGame['month']
         dateString = "2023-"+monthUserGame+"-"+dayUserGame
