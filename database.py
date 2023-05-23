@@ -72,7 +72,7 @@ def pretest3Available(user):
             dateNow = datetime.datetime.now()
             difference = dateNow - dateGame
 
-            if (difference.days < 14):
+            if (difference.days <= 14):
                 gameAvailable = False
             else:
                 gameAvailable = True
