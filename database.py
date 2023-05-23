@@ -63,20 +63,21 @@ def pretest3Available(user):
     userGameDocument = mongo.db.games.find(filter).sort([('month', -1)]).limit(1)
 
     if (userGameDocument):
-        userGame = json_util.loads(json_util.dumps(userGameDocument))
-        dayUserGame = userGame['day']
-        monthUserGame = userGame['month']
-        dateString = "2023-"+monthUserGame+"-"+dayUserGame
-        dateGame = datetime.datetime.strptime(dateString, "%Y-%m-%d")
-        dateNow = datetime.datetime.now()
-        difference = dateNow - dateGame
+        for doc in userGameDocument:
+            userGame = json_util.loads(json_util.dumps(doc))
+            dayUserGame = userGame['day']
+            monthUserGame = userGame['month']
+            dateString = "2023-"+monthUserGame+"-"+dayUserGame
+            dateGame = datetime.datetime.strptime(dateString, "%Y-%m-%d")
+            dateNow = datetime.datetime.now()
+            difference = dateNow - dateGame
 
-        if (difference.days < 14):
-            gameAvailable = False
-        else:
-            gameAvailable = True
+            if (difference.days < 14):
+                gameAvailable = False
+            else:
+                gameAvailable = True
 
-        return gameAvailable
+            return gameAvailable
     else:
         return
 
