@@ -44,8 +44,11 @@ def gameAvailable(user, game):
             dayUserGame = userGame['day']
             monthUserGame = userGame['month']
             dateNow = datetime.datetime.now()
+            dateString = dateNow.year + "-" + str(monthUserGame) + "-" + str(dayUserGame)
+            dateGame = datetime.datetime.strptime(dateString, "%Y-%m-%d")
+            difference = dateNow - dateGame
 
-            if (dayUserGame == dateNow.day and monthUserGame == dateNow.month):
+            if difference >= 1:
                 gameAvailable = False
             else:
                 gameAvailable = True
@@ -72,7 +75,7 @@ def pretest3Available(user):
             dateNow = datetime.datetime.now()
             difference = dateNow - dateGame
 
-            if (difference.days <= 14):
+            if difference.days <= 14:
                 gameAvailable = False
             else:
                 gameAvailable = True
@@ -80,17 +83,6 @@ def pretest3Available(user):
             return gameAvailable
     else:
         return
-
-def pretestAvailable(pretest):
-
-    configDocument = mongo.db.config.find_one({'_id': ObjectId('641afea2cc5d82ccbacd36de')})
-    configPretest = json_util.loads(json_util.dumps(configDocument))
-    dateNow = datetime.datetime.now()
-
-    if configPretest['pretest'+str(pretest)+'_month'] == dateNow.month and (configPretest['pretest'+str(pretest)+'_day'] == dateNow.day or (configPretest['pretest'+str(pretest)+'_day']+1 == dateNow.day)):
-        return True
-    else:
-        return False
 
 @app.route ('/test/<id>', methods=['GET'])
 def test(id):
@@ -109,10 +101,7 @@ def nextGame(id):
     userDocument = mongo.db.user.find_one({ '_id': ObjectId(id) })
     user = json_util.loads(json_util.dumps(userDocument))
     if user['pretest_complete'] == 0:
-        if pretestAvailable(1):
-            game = 0
-        else:
-            game = -5
+        game = 0
     elif user['pretest_complete'] == 1:
         if not user['game1_complete'] and not user['game1_part2_complete']:
             if gameAvailable(id, 'pretest'):
@@ -139,13 +128,13 @@ def nextGame(id):
                 game = 6
             else:
                 game = -5
-        elif pretestAvailable(2):
+        else:
             if gameAvailable(id, 'survey'):
                 game = 0
             else:
                 game = -5
     elif user['pretest_complete'] == 2:
-        if pretestAvailable(3):
+        if pretest3Available(3):
             game = 0
         else:
             game = -5
@@ -253,11 +242,17 @@ def userExists():
       
       if (userDocument):
             user = json_util.loads(json_util.dumps(userDocument))
-            objectId = str(user['_id'])
-            data = {
-                  'exists': True,
-                  'token': objectId
-            }
+            if (user['activated']):
+                objectId = str(user['_id'])
+                data = {
+                'exists': True,
+                'token': objectId
+                }
+            else:
+                data = {
+                    'exists': False,
+                    'token': ''
+                }
       else:
             data = {
                   'exists': False,
