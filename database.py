@@ -44,7 +44,7 @@ def gameAvailable(user, game):
             dayUserGame = userGame['day']
             monthUserGame = userGame['month']
             dateNow = datetime.datetime.now()
-            dateString = dateNow.year + "-" + str(monthUserGame) + "-" + str(dayUserGame)
+            dateString = str(dateNow.year) + "-" + str(monthUserGame) + "-" + str(dayUserGame)
             dateGame = datetime.datetime.strptime(dateString, "%Y-%m-%d")
             difference = dateNow - dateGame
 
