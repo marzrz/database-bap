@@ -70,9 +70,9 @@ def pretest3Available(user):
             userGame = json_util.loads(json_util.dumps(doc))
             dayUserGame = userGame['day']
             monthUserGame = userGame['month']
-            dateString = "2023-"+str(monthUserGame)+"-"+str(dayUserGame)
-            dateGame = datetime.datetime.strptime(dateString, "%Y-%m-%d")
             dateNow = datetime.datetime.now()
+            dateString = str(dateNow.year) + "-" + str(monthUserGame) + "-" + str(dayUserGame)
+            dateGame = datetime.datetime.strptime(dateString, "%Y-%m-%d")
             difference = dateNow - dateGame
 
             if difference.days <= 14:
