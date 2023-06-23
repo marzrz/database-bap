@@ -363,7 +363,10 @@ def setConverControl():
     idUser = request.json['user']
     data = request.json['data']
 
-    result = mongo.db.conversation.insert_one(data)
+    conversation = {
+        'conversation': data
+    }
+    result = mongo.db.conversation.insert_one(conversation)
     idConver = result.inserted_id
 
     filter = {'_id': ObjectId(idUser)}
