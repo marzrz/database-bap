@@ -358,6 +358,35 @@ def setMessage():
             }
             return jsonify(response)
 
+@app.route('/conversation/control', methods=['POST'])
+def setConverControl():
+    idUser = request.json['user']
+    data = request.json['data']
+
+    result = mongo.db.conversation.insert_one(data)
+    idConver = result.inserted_id
+
+    filter = {'_id': ObjectId(idUser)}
+    userDocument = mongo.db.user.find_one(filter)
+
+    if (userDocument):
+        user = json_util.loads(json_util.dumps(userDocument))
+        converArray = user['conversations']
+
+        converArray.append(idConver)
+        dataUpdate = {
+            '$set': { 'conversations': converArray }
+        }
+        mongo.db.user.update_one(filter, dataUpdate)
+        response = {
+            'status': 'success'
+        }
+    else:
+        response = {
+            'status': 'error'
+        }
+    return jsonify(response)
+
 @app.route ('/conversation', methods=['POST'])
 def setConversation():
       idUser = request.json['user']
