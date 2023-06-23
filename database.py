@@ -3,7 +3,7 @@ from flask_cors import CORS
 from flask import Flask, jsonify, request
 from flask_pymongo import PyMongo
 from bson import json_util, ObjectId
-import datetime
+from datetime import datetime
 
 app = Flask(__name__)
 # marina:ersO%D564mj6@
@@ -362,9 +362,11 @@ def setMessage():
 def setConverControl():
     idUser = request.json['user']
     data = request.json['data']
+    date = datetime.now()
 
     conversation = {
-        'conversation': data
+        'conversation': data,
+        'date': str(date.day) + '/' + str(date.month) + '/' + str(date.year) + ', ' + str(date.hour) + ':' + str(date.minute) + ':' + str(date.second)
     }
     result = mongo.db.conversation.insert_one(conversation)
     idConver = result.inserted_id
