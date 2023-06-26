@@ -166,7 +166,7 @@ def getGameAvailable():
             userGame = json_util.loads(json_util.dumps(doc))
             dayUserGame = userGame['day']
             monthUserGame = userGame['month']
-            dateNow = datetime.datetime.now()
+            dateNow = datetime.now()
 
             if (dayUserGame == dateNow.day and monthUserGame == dateNow.month):
                 gameAvailable = False
