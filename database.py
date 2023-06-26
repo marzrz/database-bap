@@ -3,30 +3,32 @@ from flask_cors import CORS
 from flask import Flask, jsonify, request
 from flask_pymongo import PyMongo
 from bson import json_util, ObjectId
-from datetime import datetime
+from datetime import datetime, timedelta
 
 app = Flask(__name__)
 # marina:ersO%D564mj6@
 app.config['MONGO_URI'] = "mongodb://localhost:27017/bon-app-petit"
 mongo = PyMongo(app)
 
-##### GAMES #####
-@app.route ('/user/game', methods=['POST'])
-def addUserGame():
-      data = request.json["update"]
-      
-      gamesDocument = mongo.db.games.insert_one(data)
 
-      if (gamesDocument):
-            data = {
-                  'status': "success"
-            }
-            return jsonify(data)
-      else: 
-            data = {
-                  'status': "error"
-            }
-            return jsonify(data)
+##### GAMES #####
+@app.route('/user/game', methods=['POST'])
+def addUserGame():
+    data = request.json["update"]
+
+    gamesDocument = mongo.db.games.insert_one(data)
+
+    if (gamesDocument):
+        data = {
+            'status': "success"
+        }
+        return jsonify(data)
+    else:
+        data = {
+            'status': "error"
+        }
+        return jsonify(data)
+
 
 def gameAvailable(user, game):
     filter = {
@@ -43,12 +45,12 @@ def gameAvailable(user, game):
             userGame = json_util.loads(json_util.dumps(doc))
             dayUserGame = userGame['day']
             monthUserGame = userGame['month']
-            dateNow = datetime.datetime.now()
+            dateNow = datetime.now()
             dateString = str(dateNow.year) + "-" + str(monthUserGame) + "-" + str(dayUserGame)
-            dateGame = datetime.datetime.strptime(dateString, "%Y-%m-%d")
+            dateGame = datetime.strptime(dateString, "%Y-%m-%d")
             difference = dateNow - dateGame
 
-            if difference >= 1:
+            if difference.days <= 1:
                 gameAvailable = False
             else:
                 gameAvailable = True
@@ -56,6 +58,7 @@ def gameAvailable(user, game):
         return gameAvailable
     else:
         return
+
 
 def pretest3Available(user):
     filter = {
@@ -70,9 +73,9 @@ def pretest3Available(user):
             userGame = json_util.loads(json_util.dumps(doc))
             dayUserGame = userGame['day']
             monthUserGame = userGame['month']
-            dateNow = datetime.datetime.now()
+            dateNow = datetime.now()
             dateString = str(dateNow.year) + "-" + str(monthUserGame) + "-" + str(dayUserGame)
-            dateGame = datetime.datetime.strptime(dateString, "%Y-%m-%d")
+            dateGame = datetime.strptime(dateString, "%Y-%m-%d")
             difference = dateNow - dateGame
 
             if difference.days <= 14:
@@ -84,7 +87,8 @@ def pretest3Available(user):
     else:
         return
 
-@app.route ('/test/<id>', methods=['GET'])
+
+@app.route('/test/<id>', methods=['GET'])
 def test(id):
     gameAvailable = pretest3Available(id)
 
@@ -94,11 +98,12 @@ def test(id):
 
     return jsonify(response)
 
-@app.route ('/user/game/<id>', methods=['GET'])
+
+@app.route('/user/game/<id>', methods=['GET'])
 def nextGame(id):
     game = -5
 
-    userDocument = mongo.db.user.find_one({ '_id': ObjectId(id) })
+    userDocument = mongo.db.user.find_one({'_id': ObjectId(id)})
     user = json_util.loads(json_util.dumps(userDocument))
     if user['pretest_complete'] == 0:
         game = 0
@@ -141,7 +146,8 @@ def nextGame(id):
 
     return jsonify({'game': game})
 
-@app.route ('/user/game/available', methods=['POST'])
+
+@app.route('/user/game/available', methods=['POST'])
 def getGameAvailable():
     user = request.json["user"]
     game = request.json["game"]
@@ -183,180 +189,188 @@ def getGameAvailable():
 
 
 ##### SHOP #####
-@app.route ('/shop', methods=['GET'])
+@app.route('/shop', methods=['GET'])
 def getShop():
-      shop = mongo.db.shop.find()
-      response = json_util.dumps(shop[0])
+    shop = mongo.db.shop.find()
+    response = json_util.dumps(shop[0])
 
-      return response
+    return response
+
 
 ##### CONFIG #####
-@app.route ('/config', methods=['GET'])
+@app.route('/config', methods=['GET'])
 def getGeneralConfig():
-      config = mongo.db.config.find()
-      response = json_util.dumps(config[0])
+    config = mongo.db.config.find()
+    response = json_util.dumps(config[0])
 
-      return response
+    return response
 
-@app.route ('/config/<id>', methods=['GET'])
+
+@app.route('/config/<id>', methods=['GET'])
 def getUserConfig():
-      userDocument = mongo.db.user.find_one({"_id": ObjectId(id)})
-      
-      if (userDocument):
-            user = json_util.loads(json_util.dumps(userDocument))
-            data = user['config']
-      else:
-            data = {
-                  'status': 'error'
-            }
-            
-      return jsonify(data)
+    userDocument = mongo.db.user.find_one({"_id": ObjectId(id)})
 
-@app.route ('/config/update', methods=['POST'])
+    if (userDocument):
+        user = json_util.loads(json_util.dumps(userDocument))
+        data = user['config']
+    else:
+        data = {
+            'status': 'error'
+        }
+
+    return jsonify(data)
+
+
+@app.route('/config/update', methods=['POST'])
 def updateConfig():
-      filter = { '_id': ObjectId("63f728e1b84fff80e32a1570")}
-      update = { '$set': request.json["update"] }
-      
-      mongo.db.config.update_one(filter, update)
-      configDocument = mongo.db.config.find_one(filter)
+    filter = {'_id': ObjectId("63f728e1b84fff80e32a1570")}
+    update = {'$set': request.json["update"]}
 
-      if (configDocument):
-            print("actualizacion " + str(json_util.loads(json_util.dumps(configDocument))))
-            data = {
-                  'status': "success"
-            }
-            return jsonify(data)
-      else: 
-            print("error")
-            data = {
-                  'status': "error"
-            }
-            return jsonify(data)
+    mongo.db.config.update_one(filter, update)
+    configDocument = mongo.db.config.find_one(filter)
+
+    if (configDocument):
+        print("actualizacion " + str(json_util.loads(json_util.dumps(configDocument))))
+        data = {
+            'status': "success"
+        }
+        return jsonify(data)
+    else:
+        print("error")
+        data = {
+            'status': "error"
+        }
+        return jsonify(data)
+
 
 ##### USER #####
-@app.route ('/user/exists', methods=['POST'])
+@app.route('/user/exists', methods=['POST'])
 def userExists():
-      username = request.json["username"]
-      password = request.json["password"]
-      userDocument = mongo.db.user.find_one({"username": username, "password": password})
-      
-      if (userDocument):
-            user = json_util.loads(json_util.dumps(userDocument))
-            if (user['activated']):
-                objectId = str(user['_id'])
-                data = {
+    username = request.json["username"]
+    password = request.json["password"]
+    userDocument = mongo.db.user.find_one({"username": username, "password": password})
+
+    if (userDocument):
+        user = json_util.loads(json_util.dumps(userDocument))
+        if (user['activated']):
+            objectId = str(user['_id'])
+            data = {
                 'exists': True,
                 'token': objectId
-                }
-            else:
-                data = {
-                    'exists': False,
-                    'token': ''
-                }
-      else:
-            data = {
-                  'exists': False,
-                  'token': ''
             }
-            
-      return jsonify(data)
+        else:
+            data = {
+                'exists': False,
+                'token': ''
+            }
+    else:
+        data = {
+            'exists': False,
+            'token': ''
+        }
 
-@app.route ('/user/<id>', methods=['GET'])
+    return jsonify(data)
+
+
+@app.route('/user/<id>', methods=['GET'])
 def getUser(id):
-      print (id)
-      user = mongo.db.user.find_one({"_id": ObjectId(id)})
-      response = json_util.dumps(user)
+    print(id)
+    user = mongo.db.user.find_one({"_id": ObjectId(id)})
+    response = json_util.dumps(user)
 
-      return response
+    return response
 
-@app.route ('/user/update', methods=['POST'])
+
+@app.route('/user/update', methods=['POST'])
 def updateUser():
-      id = request.json["_id"]
-      filter = { '_id': ObjectId(id)}
-      update = { '$set': request.json["update"] }
-      
-      mongo.db.user.update_one(filter, update)
-      userDocument = mongo.db.user.find_one(filter)
+    id = request.json["_id"]
+    filter = {'_id': ObjectId(id)}
+    update = {'$set': request.json["update"]}
 
-      if (userDocument):
-            print("actualizacion " + str(json_util.loads(json_util.dumps(userDocument))))
-            data = {
-                  'status': "success"
-            }
-            return jsonify(data)
-      else: 
-            print("error")
-            data = {
-                  'status': "error"
-            }
-            return jsonify(data)
+    mongo.db.user.update_one(filter, update)
+    userDocument = mongo.db.user.find_one(filter)
 
-@app.route ('/user/pretest', methods=['POST'])
+    if (userDocument):
+        print("actualizacion " + str(json_util.loads(json_util.dumps(userDocument))))
+        data = {
+            'status': "success"
+        }
+        return jsonify(data)
+    else:
+        print("error")
+        data = {
+            'status': "error"
+        }
+        return jsonify(data)
+
+
+@app.route('/user/pretest', methods=['POST'])
 def setPretest():
-      idUser = request.json['user']
-      data = request.json['pretest']
-      points = request.json['points']
+    idUser = request.json['user']
+    data = request.json['pretest']
+    points = request.json['points']
 
-      result = mongo.db.pretest.insert_one(data)
-      idPretest = result.inserted_id
+    result = mongo.db.pretest.insert_one(data)
+    idPretest = result.inserted_id
 
-      filter = { '_id': ObjectId(idUser)}
-      userDocument = mongo.db.user.find_one(filter)
+    filter = {'_id': ObjectId(idUser)}
+    userDocument = mongo.db.user.find_one(filter)
 
-      if (userDocument):
-            user = json_util.loads(json_util.dumps(userDocument))
-            pretestArray = user['pretests']
-            pointsUser = user['points']
-            numPretest = user['pretest_complete']
+    if (userDocument):
+        user = json_util.loads(json_util.dumps(userDocument))
+        pretestArray = user['pretests']
+        pointsUser = user['points']
+        numPretest = user['pretest_complete']
 
-            pretestArray.append(idPretest)
-            dataUpdate = {
-                  '$set': {
-                    'pretests': pretestArray,
-                    'points': pointsUser + points,
-                    'pretest_complete': numPretest + 1
-                    }
+        pretestArray.append(idPretest)
+        dataUpdate = {
+            '$set': {
+                'pretests': pretestArray,
+                'points': pointsUser + points,
+                'pretest_complete': numPretest + 1
             }
-            mongo.db.user.update_one(filter, dataUpdate)
-            response = {
-                  'status': "success"
-            }
-            return jsonify(response)
-      else: 
-            response = {
-                  'status': "error"
-            }
-            return jsonify(response)
+        }
+        mongo.db.user.update_one(filter, dataUpdate)
+        response = {
+            'status': "success"
+        }
+        return jsonify(response)
+    else:
+        response = {
+            'status': "error"
+        }
+        return jsonify(response)
 
 
 ##### CONVERSATIONS ######
 @app.route('/message', methods=['POST'])
 def setMessage():
-      # idUser = request.json['user']
-      message = request.json['message']
-      session = request.json['session']
+    # idUser = request.json['user']
+    message = request.json['message']
+    session = request.json['session']
 
-      filter = { 'session': session }
-      converDocument = mongo.db.conversation.find_one(filter)
+    filter = {'session': session}
+    converDocument = mongo.db.conversation.find_one(filter)
 
-      if (converDocument):
-            conver = json_util.loads(json_util.dumps(converDocument))
-            msgArray = conver['messages']
+    if (converDocument):
+        conver = json_util.loads(json_util.dumps(converDocument))
+        msgArray = conver['messages']
 
-            msgArray.append(message)
-            dataUpdate = {
-                  '$set': {'messages': msgArray}
-            }
-            mongo.db.conversation.update_one(filter, dataUpdate)
-            response = {
-                  'status': 'success'
-            }
-            return jsonify(response)
-      else: 
-            response = {
-                  'status': "error"
-            }
-            return jsonify(response)
+        msgArray.append(message)
+        dataUpdate = {
+            '$set': {'messages': msgArray}
+        }
+        mongo.db.conversation.update_one(filter, dataUpdate)
+        response = {
+            'status': 'success'
+        }
+        return jsonify(response)
+    else:
+        response = {
+            'status': "error"
+        }
+        return jsonify(response)
+
 
 @app.route('/conversation/control', methods=['POST'])
 def setConverControl():
@@ -366,7 +380,8 @@ def setConverControl():
 
     conversation = {
         'conversation': data,
-        'date': str(date.day) + '/' + str(date.month) + '/' + str(date.year) + ', ' + str(date.hour) + ':' + str(date.minute) + ':' + str(date.second)
+        'date': str(date.day) + '/' + str(date.month) + '/' + str(date.year) + ', ' + str(date.hour) + ':' + str(
+            date.minute) + ':' + str(date.second)
     }
     result = mongo.db.conversation.insert_one(conversation)
     idConver = result.inserted_id
@@ -380,7 +395,7 @@ def setConverControl():
 
         converArray.append(idConver)
         dataUpdate = {
-            '$set': { 'conversations': converArray }
+            '$set': {'conversations': converArray}
         }
         mongo.db.user.update_one(filter, dataUpdate)
         response = {
@@ -392,68 +407,72 @@ def setConverControl():
         }
     return jsonify(response)
 
-@app.route ('/conversation', methods=['POST'])
+
+@app.route('/conversation', methods=['POST'])
 def setConversation():
-      idUser = request.json['user']
-      data = request.json['conver']
-      session = request.json['session']
+    idUser = request.json['user']
+    data = request.json['conver']
+    session = request.json['session']
 
-      conversation = {
-            'session': session,
-            'messages': [data]
-      }
+    conversation = {
+        'session': session,
+        'messages': [data]
+    }
 
-      result = mongo.db.conversation.insert_one(conversation)
-      idConver = result.inserted_id
+    result = mongo.db.conversation.insert_one(conversation)
+    idConver = result.inserted_id
 
-      filter = { '_id': ObjectId(idUser)}
-      userDocument = mongo.db.user.find_one(filter)
+    filter = {'_id': ObjectId(idUser)}
+    userDocument = mongo.db.user.find_one(filter)
 
-      if (userDocument):
-            user = json_util.loads(json_util.dumps(userDocument))
-            converArray = user['conversations']
+    if (userDocument):
+        user = json_util.loads(json_util.dumps(userDocument))
+        converArray = user['conversations']
 
-            converArray.append(idConver)
-            dataUpdate = {
-                  '$set': {'conversations': converArray}
-            }
-            mongo.db.user.update_one(filter, dataUpdate)
-            response = {
-                  'status': "success"
-            }
-            return jsonify(response)
-      else: 
-            response = {
-                  'status': "error"
-            }
-            return jsonify(response)
+        converArray.append(idConver)
+        dataUpdate = {
+            '$set': {'conversations': converArray}
+        }
+        mongo.db.user.update_one(filter, dataUpdate)
+        response = {
+            'status': "success"
+        }
+        return jsonify(response)
+    else:
+        response = {
+            'status': "error"
+        }
+        return jsonify(response)
 
-@app.route ('/conversation/last/<id>', methods=['GET'])
+
+@app.route('/conversation/last/<id>', methods=['GET'])
 def getLastConversation(id):
-      userDocument = mongo.db.user.find_one({"_id": ObjectId(id)})
-      if (userDocument):
-            user = json_util.loads(json_util.dumps(userDocument))
-            convers = user['conversations']
-            if (not convers):
-                  response = {
-                        'status': "error"
-                  }
-                  return jsonify(response)
-            else:
-                  last_conver_id = convers[-1]
-                  converDocument = mongo.db.user.find_one({"_id": ObjectId(last_conver_id)})
-                  response = json_util.dumps(converDocument)
-
-                  return response
-      else:
+    userDocument = mongo.db.user.find_one({"_id": ObjectId(id)})
+    if (userDocument):
+        user = json_util.loads(json_util.dumps(userDocument))
+        convers = user['conversations']
+        if (not convers):
             response = {
-                  'status': "error"
+                'status': "error"
             }
             return jsonify(response)
+        else:
+            last_conver_id = convers[-1]
+            converDocument = mongo.db.user.find_one({"_id": ObjectId(last_conver_id)})
+            response = json_util.dumps(converDocument)
+
+            return response
+    else:
+        response = {
+            'status': "error"
+        }
+        return jsonify(response)
+
 
 if __name__ == '__main__':
-      import ssl
-      context = ssl.SSLContext()
-      context.load_cert_chain("/etc/ssl/certs/conversational_ugr_es.pem","/etc/ssl/certs/conversational_ugr_es.key")
-      CORS(app)
-      app.run(host='0.0.0.0',port=5200,ssl_context=context,debug=False)
+    import ssl
+
+    context = ssl.SSLContext()
+    context.load_cert_chain("/etc/ssl/certs/conversational_ugr_es.pem", "/etc/ssl/certs/conversational_ugr_es.key")
+    CORS(app)
+    app.run(host='0.0.0.0', port=5200, ssl_context=context, debug=False)
