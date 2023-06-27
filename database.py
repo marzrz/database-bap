@@ -50,7 +50,7 @@ def gameAvailable(user, game):
             dateGame = datetime.strptime(dateString, "%Y-%m-%d")
             difference = dateNow - dateGame
 
-            if difference.days <= 1:
+            if difference.days < 1:
                 gameAvailable = False
             else:
                 gameAvailable = True
@@ -78,7 +78,7 @@ def pretest3Available(user):
             dateGame = datetime.strptime(dateString, "%Y-%m-%d")
             difference = dateNow - dateGame
 
-            if difference.days <= 14:
+            if difference.days < 14:
                 gameAvailable = False
             else:
                 gameAvailable = True
